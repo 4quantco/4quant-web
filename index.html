@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EF</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000000;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        .container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .neon-text {
+            font-size: clamp(8rem, 25vw, 20rem);
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: #ffffff;
+            text-align: center;
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            text-transform: uppercase;
+            position: relative;
+            animation: pulse 2s ease-in-out infinite;
+            text-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.6),
+                0 0 30px rgba(255, 255, 255, 0.4),
+                0 0 40px rgba(255, 255, 255, 0.3),
+                0 0 70px rgba(255, 255, 255, 0.2),
+                0 0 100px rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                text-shadow: 
+                    0 0 10px rgba(255, 255, 255, 0.8),
+                    0 0 20px rgba(255, 255, 255, 0.6),
+                    0 0 30px rgba(255, 255, 255, 0.4),
+                    0 0 40px rgba(255, 255, 255, 0.3),
+                    0 0 70px rgba(255, 255, 255, 0.2),
+                    0 0 100px rgba(255, 255, 255, 0.1);
+            }
+            50% {
+                opacity: 0.85;
+                text-shadow: 
+                    0 0 5px rgba(255, 255, 255, 0.6),
+                    0 0 10px rgba(255, 255, 255, 0.4),
+                    0 0 15px rgba(255, 255, 255, 0.3),
+                    0 0 20px rgba(255, 255, 255, 0.2),
+                    0 0 35px rgba(255, 255, 255, 0.15),
+                    0 0 50px rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        /* Ekstra parıltı efekti için */
+        .neon-text::before {
+            content: 'EF';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            color: transparent;
+            text-shadow: 
+                0 0 20px rgba(255, 255, 255, 0.5),
+                0 0 40px rgba(255, 255, 255, 0.3),
+                0 0 60px rgba(255, 255, 255, 0.2);
+            animation: pulse 2s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        /* Mobil optimizasyonu */
+        @media (max-width: 768px) {
+            .neon-text {
+                font-size: clamp(6rem, 30vw, 12rem);
+                letter-spacing: 0.05em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .neon-text {
+                font-size: clamp(4rem, 35vw, 10rem);
+            }
+        }
+
+        /* Ekstra romantik dokunuş - hafif parçacık efekti */
+        .sparkle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: sparkle 3s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="neon-text">EF</div>
+    </div>
+
+    <script>
+        // Romantik bir dokunuş için hafif parçacık efekti
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = Math.random() * 100 + '%';
+            sparkle.style.top = Math.random() * 100 + '%';
+            sparkle.style.animationDelay = Math.random() * 3 + 's';
+            sparkle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.remove();
+            }, 5000);
+        }
+
+        // Her 2 saniyede bir parçacık oluştur
+        setInterval(createSparkle, 2000);
+        
+        // İlk parçacıkları oluştur
+        for (let i = 0; i < 5; i++) {
+            setTimeout(createSparkle, i * 400);
+        }
+    </script>
+</body>
+</html>
