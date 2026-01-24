@@ -1,9 +1,55 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EF</title>
+    <title>4Quant | Democratizing Algorithmic Trading</title>
+    <meta name="description"
+        content="Build, Backtest, and Automate trading strategies with AI. No coding required. Join the future of algorithmic trading.">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts - Inter & Geist Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'neon-blue': '#00D4FF',
+                        'neon-green': '#00FF94',
+                        'dark': '#000000',
+                        'dark-card': '#0A0A0A',
+                        'dark-border': '#1A1A1A',
+                    },
+                    animation: {
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 20px rgba(0, 212, 255, 0.3), 0 0 40px rgba(0, 212, 255, 0.1)' },
+                            '100%': { boxShadow: '0 0 30px rgba(0, 255, 148, 0.4), 0 0 60px rgba(0, 255, 148, 0.2)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotateX(10deg)' },
+                            '50%': { transform: 'translateY(-10px) rotateX(10deg)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -12,147 +58,354 @@
         }
 
         body {
-            background: #000000;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-        }
-
-        .container {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
-
-        .neon-text {
-            font-size: clamp(8rem, 25vw, 20rem);
-            font-weight: 300;
-            letter-spacing: 0.1em;
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
             color: #ffffff;
-            text-align: center;
-            font-family: 'Arial', 'Helvetica', sans-serif;
-            text-transform: uppercase;
+            overflow-x: hidden;
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #00D4FF 0%, #00FF94 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Glowing Button */
+        .glow-button {
+            background: linear-gradient(135deg, #00D4FF 0%, #00FF94 100%);
             position: relative;
-            animation: pulse 2s ease-in-out infinite;
-            text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(255, 255, 255, 0.6),
-                0 0 30px rgba(255, 255, 255, 0.4),
-                0 0 40px rgba(255, 255, 255, 0.3),
-                0 0 70px rgba(255, 255, 255, 0.2),
-                0 0 100px rgba(255, 255, 255, 0.1);
+            z-index: 1;
+            transition: all 0.3s ease;
         }
 
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-                text-shadow: 
-                    0 0 10px rgba(255, 255, 255, 0.8),
-                    0 0 20px rgba(255, 255, 255, 0.6),
-                    0 0 30px rgba(255, 255, 255, 0.4),
-                    0 0 40px rgba(255, 255, 255, 0.3),
-                    0 0 70px rgba(255, 255, 255, 0.2),
-                    0 0 100px rgba(255, 255, 255, 0.1);
-            }
-            50% {
-                opacity: 0.85;
-                text-shadow: 
-                    0 0 5px rgba(255, 255, 255, 0.6),
-                    0 0 10px rgba(255, 255, 255, 0.4),
-                    0 0 15px rgba(255, 255, 255, 0.3),
-                    0 0 20px rgba(255, 255, 255, 0.2),
-                    0 0 35px rgba(255, 255, 255, 0.15),
-                    0 0 50px rgba(255, 255, 255, 0.1);
-            }
-        }
-
-        /* Ekstra parıltı efekti için */
-        .neon-text::before {
-            content: 'EF';
+        .glow-button::before {
+            content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            color: transparent;
-            text-shadow: 
-                0 0 20px rgba(255, 255, 255, 0.5),
-                0 0 40px rgba(255, 255, 255, 0.3),
-                0 0 60px rgba(255, 255, 255, 0.2);
-            animation: pulse 2s ease-in-out infinite;
+            inset: -2px;
+            background: linear-gradient(135deg, #00D4FF 0%, #00FF94 100%);
+            border-radius: inherit;
             z-index: -1;
+            filter: blur(15px);
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
         }
 
-        /* Mobil optimizasyonu */
-        @media (max-width: 768px) {
-            .neon-text {
-                font-size: clamp(6rem, 30vw, 12rem);
-                letter-spacing: 0.05em;
-            }
+        .glow-button:hover::before {
+            opacity: 1;
         }
 
-        @media (max-width: 480px) {
-            .neon-text {
-                font-size: clamp(4rem, 35vw, 10rem);
-            }
+        .glow-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
         }
 
-        /* Ekstra romantik dokunuş - hafif parçacık efekti */
-        .sparkle {
+        /* Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.4s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        /* Dashboard Placeholder */
+        .dashboard-placeholder {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 255, 148, 0.05) 100%);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: perspective(1000px) rotateX(10deg);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Subtle Grid Background */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* Radial Gradient Overlay */
+        .radial-gradient {
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0, 212, 255, 0.15) 0%, transparent 60%);
+        }
+
+        /* Bento Grid Item Border Glow on Hover */
+        .bento-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bento-item::before {
+            content: '';
             position: absolute;
-            width: 2px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            animation: sparkle 3s ease-in-out infinite;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 255, 148, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
-        @keyframes sparkle {
-            0%, 100% {
-                opacity: 0;
-                transform: scale(0);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1);
-            }
+        .bento-item:hover::before {
+            opacity: 1;
+        }
+
+        /* Link Hover Effect */
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(90deg, #00D4FF, #00FF94);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Footer Link */
+        .footer-link {
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: #00D4FF;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="neon-text">EF</div>
-    </div>
 
+<body class="min-h-screen grid-bg">
+    <!-- Radial Gradient Overlay -->
+    <div class="fixed inset-0 radial-gradient pointer-events-none"></div>
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-black/50 border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="#" class="flex items-center gap-2 group">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-blue to-neon-green flex items-center justify-center font-bold text-black text-lg group-hover:scale-105 transition-transform">
+                        4Q
+                    </div>
+                    <span class="font-semibold text-white/90 hidden sm:block">4Quant</span>
+                </a>
+
+                <!-- Contact Button -->
+                <a href="mailto:contact@4quant.io"
+                    class="px-5 py-2.5 rounded-full border border-white/20 text-sm font-medium text-white/90 hover:bg-white/5 hover:border-white/40 transition-all duration-300">
+                    Contact
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 px-6 min-h-screen flex flex-col items-center justify-center">
+        <div class="max-w-5xl mx-auto text-center">
+            <!-- Badge -->
+            <div
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 text-xs font-medium text-white/70 mb-8">
+                <span class="w-2 h-2 rounded-full bg-neon-green animate-pulse"></span>
+                Now in Private Beta
+            </div>
+
+            <!-- H1 -->
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 tracking-tight">
+                Democratizing<br>
+                <span class="gradient-text">Algorithmic Trading.</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed">
+                Build, Backtest, and Automate strategies with AI.<br class="hidden sm:block">
+                No coding required.
+            </p>
+
+            <!-- CTA Button -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <button class="glow-button px-8 py-4 rounded-full text-black font-semibold text-base">
+                    Join Waitlist
+                </button>
+                <a href="#features"
+                    class="nav-link text-white/60 hover:text-white transition-colors text-sm font-medium">
+                    Learn more →
+                </a>
+            </div>
+        </div>
+
+        <!-- Dashboard Placeholder -->
+        <div class="w-full max-w-4xl mx-auto mt-16 sm:mt-20">
+            <div
+                class="dashboard-placeholder rounded-2xl sm:rounded-3xl p-6 sm:p-8 min-h-[280px] sm:min-h-[350px] md:min-h-[400px] flex items-center justify-center">
+                <!-- Placeholder Content - Replace with actual dashboard image -->
+                <div class="text-center">
+                    <div class="flex items-center justify-center gap-4 mb-6">
+                        <!-- Mock Chart Bars -->
+                        <div
+                            class="w-3 sm:w-4 h-12 sm:h-16 bg-gradient-to-t from-neon-blue/30 to-neon-blue/80 rounded-full">
+                        </div>
+                        <div
+                            class="w-3 sm:w-4 h-20 sm:h-24 bg-gradient-to-t from-neon-green/30 to-neon-green/80 rounded-full">
+                        </div>
+                        <div
+                            class="w-3 sm:w-4 h-14 sm:h-20 bg-gradient-to-t from-neon-blue/30 to-neon-blue/80 rounded-full">
+                        </div>
+                        <div
+                            class="w-3 sm:w-4 h-24 sm:h-32 bg-gradient-to-t from-neon-green/30 to-neon-green/80 rounded-full">
+                        </div>
+                        <div
+                            class="w-3 sm:w-4 h-16 sm:h-20 bg-gradient-to-t from-neon-blue/30 to-neon-blue/80 rounded-full">
+                        </div>
+                        <div
+                            class="w-3 sm:w-4 h-10 sm:h-12 bg-gradient-to-t from-neon-green/30 to-neon-green/80 rounded-full">
+                        </div>
+                    </div>
+                    <p class="text-white/30 text-sm">Trading Dashboard Preview</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Value Props - Bento Grid -->
+    <section id="features" class="relative py-20 sm:py-32 px-6">
+        <div class="max-w-6xl mx-auto">
+            <!-- Section Header -->
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Why <span
+                        class="gradient-text">4Quant</span>?</h2>
+                <p class="text-white/50 text-base sm:text-lg max-w-xl mx-auto">Built for the next generation of traders
+                </p>
+            </div>
+
+            <!-- Bento Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Card 1: AI Powered -->
+                <div class="bento-item glass-card rounded-2xl sm:rounded-3xl p-6 sm:p-8">
+                    <div
+                        class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-neon-blue/20 to-neon-green/10 flex items-center justify-center mb-5 sm:mb-6">
+                        <!-- AI Icon -->
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-neon-blue" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            <circle cx="12" cy="9" r="2" stroke-width="1.5" />
+                            <path stroke-linecap="round" stroke-width="1.5" d="M12 7V5M12 13v-2M14 9h2M8 9h2" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">AI Powered</h3>
+                    <p class="text-white/50 text-sm sm:text-base leading-relaxed">
+                        Let artificial intelligence analyze markets, identify patterns, and optimize your strategies in
+                        real-time.
+                    </p>
+                </div>
+
+                <!-- Card 2: Lightning Fast Execution -->
+                <div class="bento-item glass-card rounded-2xl sm:rounded-3xl p-6 sm:p-8">
+                    <div
+                        class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-neon-blue/20 to-neon-green/10 flex items-center justify-center mb-5 sm:mb-6">
+                        <!-- Lightning Icon -->
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-neon-green" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">Lightning Fast Execution</h3>
+                    <p class="text-white/50 text-sm sm:text-base leading-relaxed">
+                        Execute trades in milliseconds. Our infrastructure ensures you never miss a market opportunity.
+                    </p>
+                </div>
+
+                <!-- Card 3: Bank-Grade Security -->
+                <div class="bento-item glass-card rounded-2xl sm:rounded-3xl p-6 sm:p-8">
+                    <div
+                        class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-neon-blue/20 to-neon-green/10 flex items-center justify-center mb-5 sm:mb-6">
+                        <!-- Lock Icon -->
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-neon-blue" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">Bank-Grade Security</h3>
+                    <p class="text-white/50 text-sm sm:text-base leading-relaxed">
+                        Your data and assets are protected with military-grade encryption and multi-layer security
+                        protocols.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative border-t border-white/5 py-10 sm:py-12 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+                <!-- Copyright -->
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-neon-blue to-neon-green flex items-center justify-center font-bold text-black text-xs">
+                        4Q
+                    </div>
+                    <span class="text-white/40 text-sm">© 2026 4Quant Inc. All rights reserved.</span>
+                </div>
+
+                <!-- Social Links -->
+                <div class="flex items-center gap-6">
+                    <a href="https://twitter.com/4quant" target="_blank" rel="noopener noreferrer"
+                        class="footer-link text-white/40 hover:text-neon-blue flex items-center gap-2 text-sm">
+                        <!-- Twitter/X Icon -->
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                        Twitter
+                    </a>
+                    <a href="https://linkedin.com/company/4quant" target="_blank" rel="noopener noreferrer"
+                        class="footer-link text-white/40 hover:text-neon-blue flex items-center gap-2 text-sm">
+                        <!-- LinkedIn Icon -->
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                        </svg>
+                        LinkedIn
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Smooth Scroll Script -->
     <script>
-        // Romantik bir dokunuş için hafif parçacık efekti
-        function createSparkle() {
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle';
-            sparkle.style.left = Math.random() * 100 + '%';
-            sparkle.style.top = Math.random() * 100 + '%';
-            sparkle.style.animationDelay = Math.random() * 3 + 's';
-            sparkle.style.animationDuration = (Math.random() * 2 + 2) + 's';
-            document.body.appendChild(sparkle);
-            
-            setTimeout(() => {
-                sparkle.remove();
-            }, 5000);
-        }
-
-        // Her 2 saniyede bir parçacık oluştur
-        setInterval(createSparkle, 2000);
-        
-        // İlk parçacıkları oluştur
-        for (let i = 0; i < 5; i++) {
-            setTimeout(createSparkle, i * 400);
-        }
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     </script>
 </body>
+
 </html>
