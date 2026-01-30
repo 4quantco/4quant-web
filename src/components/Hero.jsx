@@ -6,6 +6,36 @@ const Hero = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
 
+    const getUtmParams = () => {
+        const params = new URLSearchParams(window.location.search);
+        return {
+            utm_source: params.get('utm_source') || null,
+            utm_medium: params.get('utm_medium') || null,
+            utm_campaign: params.get('utm_campaign') || null,
+        };
+    };
+
+    const getDeviceType = () => {
+        const width = window.screen?.width || 0;
+        return width < 768 ? 'mobile' : 'desktop';
+    };
+
+    const getIpAddress = async () => {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            const response = await fetch('https://api.ipify.org?format=json', {
+                signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data.ip || null;
+        } catch {
+            return null;
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -18,11 +48,55 @@ const Hero = () => {
         setMessage({ type: '', text: '' });
 
         try {
+            // Gather UTM params
+            const utmParams = getUtmParams();
+
+            // Safe IP fetch (non-blocking on failure)
+            const ipAddress = await getIpAddress();
+
+            // Strict type conversion for all fields
+            const screenWidth = parseInt(window.screen?.width, 10) || 0;
+            const screenHeight = parseInt(window.screen?.height, 10) || 0;
+
+            const payload = {
+                // Core
+                email: String(email).trim(),
+
+                // Marketing data (lowercase column names)
+                utm_source: utmParams.utm_source,
+                utm_medium: utmParams.utm_medium,
+                utm_campaign: utmParams.utm_campaign,
+                referrer: document.referrer ? String(document.referrer) : null,
+                Source: utmParams.utm_source || 'direct', // Capitalized column
+
+                // Technical data (strict types)
+                user_agent: navigator.userAgent ? String(navigator.userAgent) : null,
+                browser_language: navigator.language ? String(navigator.language) : null,
+                screen_width: screenWidth,   // Integer
+                screen_height: screenHeight, // Integer
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null,
+                device_type: getDeviceType(),
+
+                // Network data
+                ip_address: ipAddress, // null if fetch failed
+
+                // Consent
+                marketing_consent: true, // Boolean
+            };
+
             const { error } = await supabase
                 .from('waitlist')
-                .insert([{ email }]);
+                .insert([payload]);
 
             if (error) {
+                // Detailed error logging
+                console.error('Supabase Insert Error:', {
+                    message: error.message,
+                    details: error.details,
+                    hint: error.hint,
+                    code: error.code,
+                });
+
                 if (error.code === '23505') {
                     setMessage({ type: 'error', text: 'This email is already on the waitlist!' });
                 } else {
@@ -33,6 +107,7 @@ const Hero = () => {
                 setEmail('');
             }
         } catch (err) {
+            console.error('Unexpected error:', err);
             setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
         } finally {
             setIsLoading(false);
