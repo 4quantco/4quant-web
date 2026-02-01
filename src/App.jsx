@@ -1,16 +1,20 @@
 import { BrowserRouter as Router } from 'react-router-dom';
 import Layout from './components/Layout';
 import Hero from './components/Hero';
-import Features from './components/Features';
 import SocialProof from './components/SocialProof';
+import Features from './components/Features';
+import StrategyExamples from './components/StrategyExamples';
+import Security from './components/Security';
 
 function App() {
   return (
     <Router>
       <Layout>
         <Hero />
-        <Features />
         <SocialProof />
+        <Features />
+        <StrategyExamples />
+        <Security />
       </Layout>
     </Router>
   );
