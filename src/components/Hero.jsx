@@ -24,9 +24,7 @@ const Hero = () => {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 3000);
-            const response = await fetch('https://api.ipify.org?format=json', {
-                signal: controller.signal,
-            });
+            const response = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
             clearTimeout(timeoutId);
             if (!response.ok) return null;
             const data = await response.json();
@@ -38,50 +36,36 @@ const Hero = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!email) {
             setMessage({ type: 'error', text: 'Please enter your email.' });
             return;
         }
-
         setIsLoading(true);
         setMessage({ type: '', text: '' });
 
         try {
             const utmParams = getUtmParams();
             const ipAddress = await getIpAddress();
-            const screenWidth = parseInt(window.screen?.width, 10) || 0;
-            const screenHeight = parseInt(window.screen?.height, 10) || 0;
-
             const payload = {
                 email: String(email).trim(),
                 utm_source: utmParams.utm_source,
                 utm_medium: utmParams.utm_medium,
                 utm_campaign: utmParams.utm_campaign,
-                referrer: document.referrer ? String(document.referrer) : null,
+                referrer: document.referrer || null,
                 Source: utmParams.utm_source || 'direct',
-                user_agent: navigator.userAgent ? String(navigator.userAgent) : null,
-                browser_language: navigator.language ? String(navigator.language) : null,
-                screen_width: screenWidth,
-                screen_height: screenHeight,
+                user_agent: navigator.userAgent || null,
+                browser_language: navigator.language || null,
+                screen_width: window.screen?.width || 0,
+                screen_height: window.screen?.height || 0,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null,
                 device_type: getDeviceType(),
                 ip_address: ipAddress,
                 marketing_consent: true,
             };
 
-            const { error } = await supabase
-                .from('waitlist')
-                .insert([payload]);
+            const { error } = await supabase.from('waitlist').insert([payload]);
 
             if (error) {
-                console.error('Supabase Insert Error:', {
-                    message: error.message,
-                    details: error.details,
-                    hint: error.hint,
-                    code: error.code,
-                });
-
                 if (error.code === '23505') {
                     setMessage({ type: 'error', text: 'This email is already on the waitlist!' });
                 } else {
@@ -91,8 +75,7 @@ const Hero = () => {
                 setMessage({ type: 'success', text: 'Welcome to the club! 🎉' });
                 setEmail('');
             }
-        } catch (err) {
-            console.error('Unexpected error:', err);
+        } catch {
             setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
         } finally {
             setIsLoading(false);
@@ -100,52 +83,68 @@ const Hero = () => {
     };
 
     return (
-        <section className="pt-32 pb-16 px-6 relative overflow-hidden">
-            {/* Aurora Gradient Background */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <section className="relative min-h-screen pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            {/* Massive Aurora Glow Background */}
+            <div className="absolute inset-0 pointer-events-none">
+                {/* Main purple glow */}
                 <div
-                    className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full animate-aurora opacity-40"
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[800px] animate-aurora"
                     style={{
-                        background: 'radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%)',
-                        filter: 'blur(80px)',
+                        background: 'radial-gradient(ellipse 50% 40% at 50% 20%, rgba(139, 92, 246, 0.25) 0%, transparent 70%)',
+                        filter: 'blur(60px)',
                     }}
                 />
+                {/* Secondary cyan glow */}
                 <div
-                    className="absolute top-1/3 right-1/4 w-[500px] h-[500px] rounded-full animate-aurora opacity-30"
+                    className="absolute top-40 left-1/4 w-[600px] h-[600px] animate-aurora opacity-50"
                     style={{
-                        background: 'radial-gradient(circle, rgba(6, 182, 212, 0.4) 0%, transparent 70%)',
+                        background: 'radial-gradient(circle, rgba(6, 182, 212, 0.2) 0%, transparent 60%)',
                         filter: 'blur(80px)',
                         animationDelay: '-5s',
                     }}
                 />
+                {/* Accent glow right */}
+                <div
+                    className="absolute top-60 right-1/4 w-[500px] h-[500px] animate-aurora opacity-40"
+                    style={{
+                        background: 'radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, transparent 60%)',
+                        filter: 'blur(80px)',
+                        animationDelay: '-10s',
+                    }}
+                />
             </div>
 
-            <div className="max-w-5xl mx-auto relative z-10">
-                {/* Centered Vertical Stack */}
-                <div className="text-center">
+            <div className="max-w-7xl mx-auto relative z-10">
+                {/* Center-Aligned Text Content */}
+                <div className="text-center max-w-4xl mx-auto mb-16">
                     {/* Badge */}
-                    <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-white/5 text-sm text-gray-600 dark:text-white/60 mb-8">
-                        <span className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse" />
-                        Now in Private Beta
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 dark:border-white/10 bg-gray-100/80 dark:bg-white/5 backdrop-blur-sm text-sm text-gray-600 dark:text-white/60 mb-8">
+                        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                        <span>Now in Private Beta</span>
+                        <span className="text-gray-400 dark:text-white/30">•</span>
+                        <span>Limited Access</span>
                     </div>
 
-                    {/* Headline */}
-                    <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight mb-6">
-                        <span className="bg-gradient-to-r from-neon-cyan to-electric-purple bg-clip-text text-transparent">The Operating System</span>
+                    {/* Massive Headline */}
+                    <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-bold leading-[1.1] tracking-tight mb-6 sm:mb-8">
+                        <span className="text-gray-900 dark:text-white">The </span>
+                        <span className="bg-gradient-to-r from-neon-cyan via-electric-purple to-neon-cyan bg-[length:200%_100%] bg-clip-text text-transparent animate-gradient">
+                            Operating System
+                        </span>
                         <br />
                         <span className="text-gray-900 dark:text-white">for Algorithmic Trading.</span>
                     </h1>
 
                     {/* Subheadline */}
-                    <p className="text-lg sm:text-xl text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-10">
-                        Build, Backtest, and Automate strategies without writing a single line of code.
+                    <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2 sm:px-0">
+                        Build, backtest, and automate institutional-grade trading strategies with AI and No-Code tools.
                     </p>
 
-                    {/* CTA: Email + Button */}
+                    {/* CTA Form */}
                     <form
-                        id="hero-cta"
+                        id="waitlist-form"
                         onSubmit={handleSubmit}
-                        className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-lg mx-auto mb-6"
+                        className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto"
                     >
                         <input
                             type="email"
@@ -153,112 +152,135 @@ const Hero = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={isLoading}
-                            className="w-full sm:flex-1 px-6 py-4 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/40 text-base focus:outline-none focus:border-neon-cyan focus:ring-2 focus:ring-neon-cyan/30 transition-all disabled:opacity-50"
+                            className="w-full sm:flex-1 px-5 py-4 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/40 text-base focus:outline-none focus:border-neon-cyan focus:ring-2 focus:ring-neon-cyan/20 transition-all disabled:opacity-50 backdrop-blur-sm"
                         />
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full sm:w-auto px-8 py-4 rounded-full font-semibold text-white text-base bg-gradient-to-r from-neon-cyan to-electric-purple shadow-lg shadow-electric-purple/30 hover:scale-105 active:scale-95 transition-all whitespace-nowrap disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                            className="w-full sm:w-auto px-8 py-4 rounded-xl font-semibold text-black text-base bg-gradient-to-r from-neon-cyan to-electric-purple shadow-xl shadow-electric-purple/30 hover:shadow-electric-purple/50 hover:scale-[1.02] active:scale-[0.98] transition-all whitespace-nowrap disabled:opacity-50"
                         >
                             {isLoading ? 'Joining...' : 'Join Waitlist →'}
                         </button>
                     </form>
 
-                    {/* Feedback Message */}
+                    {/* Feedback */}
                     {message.text && (
-                        <p className={`text-sm mb-8 ${message.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+                        <p className={`mt-4 text-sm ${message.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
                             {message.text}
                         </p>
                     )}
                 </div>
 
-                {/* Dashboard Visual - Below Text */}
-                <div className="mt-16 perspective-1000">
-                    {/* Glow effect behind dashboard */}
+                {/* 3D Tilted Dashboard Mockup */}
+                <div className="relative max-w-5xl mx-auto">
+                    {/* Glow behind dashboard */}
                     <div
-                        className="absolute inset-x-0 top-1/2 h-96 pointer-events-none"
+                        className="absolute inset-0 -bottom-20"
                         style={{
-                            background: 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(139, 92, 246, 0.3) 0%, transparent 70%)',
+                            background: 'radial-gradient(ellipse 80% 50% at 50% 100%, rgba(139, 92, 246, 0.3) 0%, transparent 60%)',
                             filter: 'blur(40px)',
                         }}
                     />
 
-                    {/* 3D Tilted Dashboard */}
+                    {/* Dashboard Container with 3D Tilt */}
                     <div
-                        className="relative mx-auto max-w-4xl animate-float"
+                        className="relative animate-float"
                         style={{
-                            transform: 'perspective(1000px) rotateX(8deg)',
-                            transformOrigin: 'center top',
+                            perspective: '1500px',
                         }}
                     >
-                        <div className="bg-gray-100/90 dark:bg-white/5 backdrop-blur-xl border border-gray-200/50 dark:border-white/10 rounded-2xl p-6 shadow-2xl shadow-electric-purple/20">
+                        <div
+                            className="bg-gray-100/90 dark:bg-[#0a0a0a] backdrop-blur-xl border border-gray-200/50 dark:border-white/10 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden"
+                            style={{
+                                transform: 'rotateX(10deg) rotateY(0deg)',
+                                transformStyle: 'preserve-3d',
+                            }}
+                        >
                             {/* Window Chrome */}
-                            <div className="flex items-center gap-2 mb-5">
-                                <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
-                                <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
-                                <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
-                                <span className="ml-3 text-gray-400 dark:text-white/30 text-sm">Trading Dashboard</span>
-                            </div>
-
-                            {/* Stats Row */}
-                            <div className="grid grid-cols-4 gap-4 mb-5">
-                                <div className="bg-gray-200/50 dark:bg-white/5 rounded-xl p-4 text-center">
-                                    <div className="text-gray-500 dark:text-white/40 text-xs mb-1">Portfolio Value</div>
-                                    <div className="text-gray-900 dark:text-white font-bold text-xl">$124,847</div>
+                            <div className="flex items-center gap-2 px-5 py-3 border-b border-gray-200/50 dark:border-white/5 bg-gray-50/50 dark:bg-white/[0.02]">
+                                <div className="flex gap-2">
+                                    <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                                    <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                                    <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
                                 </div>
-                                <div className="bg-gray-200/50 dark:bg-white/5 rounded-xl p-4 text-center">
-                                    <div className="text-gray-500 dark:text-white/40 text-xs mb-1">Today's P&L</div>
-                                    <div className="text-green-500 font-bold text-xl">+$2,431</div>
-                                </div>
-                                <div className="bg-gray-200/50 dark:bg-white/5 rounded-xl p-4 text-center">
-                                    <div className="text-gray-500 dark:text-white/40 text-xs mb-1">Win Rate</div>
-                                    <div className="text-neon-cyan font-bold text-xl">68.4%</div>
-                                </div>
-                                <div className="bg-gray-200/50 dark:bg-white/5 rounded-xl p-4 text-center">
-                                    <div className="text-gray-500 dark:text-white/40 text-xs mb-1">Active Bots</div>
-                                    <div className="text-electric-purple font-bold text-xl">5</div>
+                                <div className="flex-1 flex justify-center">
+                                    <div className="px-4 py-1 rounded-md bg-gray-200/50 dark:bg-white/5 text-gray-500 dark:text-white/40 text-xs">
+                                        app.4quant.co/dashboard
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Chart Area */}
-                            <div className="bg-gray-200/50 dark:bg-white/5 rounded-xl p-5 h-40 flex items-end gap-1">
-                                {[35, 45, 40, 60, 55, 70, 65, 80, 75, 85, 70, 90, 85, 95, 80, 88, 92, 85, 90, 95].map((height, i) => (
-                                    <div
-                                        key={i}
-                                        className="flex-1 rounded-sm bg-gradient-to-t from-neon-cyan/40 to-electric-purple/60"
-                                        style={{ height: `${height}%` }}
-                                    />
-                                ))}
-                            </div>
+                            {/* Dashboard Content */}
+                            <div className="p-6">
+                                {/* Top Stats Bar */}
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
+                                    {[
+                                        { label: 'Portfolio Value', value: '$847,294', change: '+12.4%', positive: true },
+                                        { label: "Today's P&L", value: '+$12,847', change: '+2.1%', positive: true },
+                                        { label: 'Active Strategies', value: '7', change: '3 running', neutral: true },
+                                        { label: 'Win Rate', value: '68.4%', change: 'Last 30d', neutral: true },
+                                    ].map((stat, i) => (
+                                        <div key={i} className="bg-gray-200/50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200/50 dark:border-white/5">
+                                            <div className="text-gray-500 dark:text-white/40 text-xs mb-1">{stat.label}</div>
+                                            <div className="text-gray-900 dark:text-white font-bold text-base sm:text-xl mb-1">{stat.value}</div>
+                                            <div className={`text-xs ${stat.positive ? 'text-green-500' : stat.neutral ? 'text-gray-400 dark:text-white/30' : 'text-red-400'}`}>
+                                                {stat.change}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
 
-                            {/* Active Strategies */}
-                            <div className="mt-5 grid grid-cols-3 gap-4">
-                                <div className="bg-gray-200/50 dark:bg-white/5 rounded-xl px-4 py-3">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                                            <span className="text-sm text-gray-700 dark:text-white/80">RSI Reversal</span>
+                                {/* Main Chart Area */}
+                                <div className="bg-gray-200/50 dark:bg-white/[0.03] rounded-xl p-5 border border-gray-200/50 dark:border-white/5 mb-6">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <span className="text-gray-700 dark:text-white/80 font-medium">Portfolio Performance</span>
+                                        <div className="flex gap-2">
+                                            {['1D', '1W', '1M', '3M', 'YTD', 'ALL'].map((period) => (
+                                                <button
+                                                    key={period}
+                                                    className={`px-2.5 py-1 rounded text-xs ${period === '1M' ? 'bg-neon-cyan/20 text-neon-cyan' : 'text-gray-500 dark:text-white/40 hover:text-gray-900 dark:hover:text-white'}`}
+                                                >
+                                                    {period}
+                                                </button>
+                                            ))}
                                         </div>
-                                        <span className="text-green-400 text-sm font-semibold">+12.4%</span>
+                                    </div>
+                                    <div className="h-40 flex items-end gap-1.5">
+                                        {[30, 45, 35, 55, 48, 65, 58, 72, 68, 78, 70, 85, 80, 90, 75, 88, 82, 95, 88, 92, 85, 98, 90, 95].map((h, i) => (
+                                            <div
+                                                key={i}
+                                                className="flex-1 rounded-sm bg-gradient-to-t from-neon-cyan/30 to-electric-purple/50"
+                                                style={{ height: `${h}%` }}
+                                            />
+                                        ))}
                                     </div>
                                 </div>
-                                <div className="bg-gray-200/50 dark:bg-white/5 rounded-xl px-4 py-3">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                                            <span className="text-sm text-gray-700 dark:text-white/80">MACD Cross</span>
+
+                                {/* Active Strategies */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                                    {[
+                                        { name: 'RSI Momentum', status: 'running', return: '+18.4%', trades: 42 },
+                                        { name: 'MACD Crossover', status: 'running', return: '+12.7%', trades: 31 },
+                                        { name: 'Mean Reversion', status: 'paused', return: '+8.2%', trades: 28 },
+                                    ].map((strategy, i) => (
+                                        <div key={i} className="bg-gray-200/50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200/50 dark:border-white/5">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <div className={`w-2 h-2 rounded-full ${strategy.status === 'running' ? 'bg-green-400 animate-pulse' : 'bg-gray-400 dark:bg-white/30'}`}></div>
+                                                <span className="text-gray-700 dark:text-white/80 text-sm font-medium">{strategy.name}</span>
+                                            </div>
+                                            <div className="flex justify-between items-end">
+                                                <div>
+                                                    <div className="text-green-500 font-bold text-lg">{strategy.return}</div>
+                                                    <div className="text-gray-400 dark:text-white/30 text-xs">{strategy.trades} trades</div>
+                                                </div>
+                                                <div className="w-16 h-8 flex items-end gap-0.5">
+                                                    {[40, 55, 45, 60, 50, 70, 65, 75].map((h, j) => (
+                                                        <div key={j} className="flex-1 rounded-sm bg-green-500/40" style={{ height: `${h}%` }} />
+                                                    ))}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <span className="text-green-400 text-sm font-semibold">+8.7%</span>
-                                    </div>
-                                </div>
-                                <div className="bg-gray-200/50 dark:bg-white/5 rounded-xl px-4 py-3">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                                            <span className="text-sm text-gray-700 dark:text-white/80">Mean Revert</span>
-                                        </div>
-                                        <span className="text-red-400 text-sm font-semibold">-2.1%</span>
-                                    </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>

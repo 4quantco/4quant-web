@@ -31,6 +31,23 @@ html.light {
   --font-inter: 'Inter', sans-serif;
 }
 
+/* Animated gradient text */
+@keyframes gradient {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient {
+  animation: gradient 6s ease-in-out infinite;
+}
+
 /* Aurora gradient animation for hero background */
 @keyframes aurora {
 
@@ -157,4 +174,51 @@ html.light {
 /* Prevent transition on page load */
 .no-transition * {
   transition: none !important;
+}
+
+/* ======================================
+   GLOBAL MOBILE RESPONSIVENESS UTILITIES
+   ====================================== */
+
+/* Responsive image scaling - prevents images from overflowing */
+.responsive-img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Apply to all images globally */
+img,
+video,
+iframe,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Standard container for main sections */
+.container-main {
+  width: 100%;
+  max-width: 80rem;
+  /* 1280px = max-w-7xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  /* px-4 */
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-main {
+    padding-left: 1.5rem;
+    /* sm:px-6 */
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-main {
+    padding-left: 2rem;
+    /* lg:px-8 */
+    padding-right: 2rem;
+  }
 }

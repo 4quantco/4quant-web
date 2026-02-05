@@ -32,9 +32,9 @@ const Footer = () => {
     };
 
     return (
-        <footer className="border-t border-gray-200 dark:border-white/5 py-16 px-6 bg-white dark:bg-black">
-            <div className="max-w-6xl mx-auto">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10 lg:gap-8">
+        <footer className="border-t border-gray-200 dark:border-white/5 py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-white dark:bg-black">
+            <div className="max-w-7xl mx-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-8">
                     {/* Column 1: Brand + Social */}
                     <div className="col-span-2 md:col-span-3 lg:col-span-2">
                         {/* Logo */}

@@ -252,14 +252,14 @@ const Features = () => {
     ];
 
     return (
-        <section id="journey" ref={sectionRef} className="py-24 px-6">
-            <div className="max-w-6xl mx-auto">
+        <section id="journey" ref={sectionRef} className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
                 {/* Section Header */}
                 <div className="text-center mb-20">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                         How 4Quant Works
                     </h2>
-                    <p className="text-white/50 text-lg max-w-xl mx-auto">
+                    <p className="text-gray-500 dark:text-white/50 text-base sm:text-lg max-w-xl mx-auto">
                         From idea to execution in four simple steps
                     </p>
                 </div>
@@ -279,8 +279,8 @@ const Features = () => {
                                     <span className="text-sm font-mono text-neon-cyan">{step.num}</span>
                                     <div className="flex-1 h-px bg-gradient-to-r from-neon-cyan/50 to-transparent"></div>
                                 </div>
-                                <h3 className="text-2xl font-bold text-white mb-4">{step.title}</h3>
-                                <p className="text-white/50 text-lg">{step.desc}</p>
+                                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">{step.title}</h3>
+                                <p className="text-gray-500 dark:text-white/50 text-sm sm:text-base md:text-lg">{step.desc}</p>
                             </div>
                             {/* Visual */}
                             <div className={index % 2 === 1 ? 'lg:order-1' : ''}>
