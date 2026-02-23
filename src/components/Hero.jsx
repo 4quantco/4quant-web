@@ -1,10 +1,19 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import Toast from './Toast';
 
 const Hero = () => {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+
+    // Email validation regex
+    const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
 
     const getUtmParams = () => {
         const params = new URLSearchParams(window.location.search);
@@ -36,10 +45,18 @@ const Hero = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validate email format
         if (!email) {
             setMessage({ type: 'error', text: 'Please enter your email.' });
             return;
         }
+
+        if (!isValidEmail(email)) {
+            setMessage({ type: 'error', text: 'Please enter a valid email address.' });
+            return;
+        }
+
         setIsLoading(true);
         setMessage({ type: '', text: '' });
 
@@ -82,8 +99,21 @@ const Hero = () => {
         }
     };
 
+    // Handle dashboard button clicks
+    const handleDashboardClick = (action) => {
+        setToastMessage(`Demo Mode: ${action}`);
+        setShowToast(true);
+    };
+
     return (
         <section className="relative min-h-screen pt-24 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            {/* Toast Notification */}
+            <Toast
+                message={toastMessage}
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+            />
+
             {/* Massive Aurora Glow Background */}
             <div className="absolute inset-0 pointer-events-none">
                 {/* Main purple glow */}
@@ -125,8 +155,11 @@ const Hero = () => {
                         <span>Limited Access</span>
                     </div>
 
-                    {/* Massive Headline */}
-                    <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-8xl font-bold leading-[1.1] tracking-tight mb-6 sm:mb-8">
+                    {/* Massive Headline with Fluid Typography */}
+                    <h1
+                        className="font-bold leading-[1.1] tracking-tight mb-6 sm:mb-8"
+                        style={{ fontSize: 'var(--text-hero)' }}
+                    >
                         <span className="text-gray-900 dark:text-white">The </span>
                         <span className="bg-gradient-to-r from-neon-cyan via-electric-purple to-neon-cyan bg-[length:200%_100%] bg-clip-text text-transparent animate-gradient">
                             Operating System
@@ -135,16 +168,19 @@ const Hero = () => {
                         <span className="text-gray-900 dark:text-white">for Algorithmic Trading.</span>
                     </h1>
 
-                    {/* Subheadline */}
-                    <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2 sm:px-0">
-                        Build, backtest, and automate institutional-grade trading strategies with AI and No-Code tools.
+                    {/* Subheadline with Fluid Typography */}
+                    <p
+                        className="text-gray-500 dark:text-white/50 max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2 sm:px-0"
+                        style={{ fontSize: 'var(--text-lg)' }}
+                    >
+                        Build, Backtest, and Automate strategies without writing a single line of code.
                     </p>
 
                     {/* CTA Form */}
                     <form
                         id="waitlist-form"
                         onSubmit={handleSubmit}
-                        className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto"
+                        className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-lg mx-auto mb-4"
                     >
                         <input
                             type="email"
@@ -163,6 +199,14 @@ const Hero = () => {
                         </button>
                     </form>
 
+                    {/* Secondary CTA */}
+                    <button
+                        onClick={() => handleDashboardClick('Watch Demo Coming Soon')}
+                        className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white text-sm underline underline-offset-4 transition-colors"
+                    >
+                        Watch Demo →
+                    </button>
+
                     {/* Feedback */}
                     {message.text && (
                         <p className={`mt-4 text-sm ${message.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
@@ -171,8 +215,8 @@ const Hero = () => {
                     )}
                 </div>
 
-                {/* 3D Tilted Dashboard Mockup */}
-                <div className="relative max-w-5xl mx-auto">
+                {/* 3D Tilted Dashboard Mockup with Mobile Scaling */}
+                <div className="relative max-w-5xl mx-auto mockup-scale-wrapper">
                     {/* Glow behind dashboard */}
                     <div
                         className="absolute inset-0 -bottom-20"
@@ -220,7 +264,11 @@ const Hero = () => {
                                         { label: 'Active Strategies', value: '7', change: '3 running', neutral: true },
                                         { label: 'Win Rate', value: '68.4%', change: 'Last 30d', neutral: true },
                                     ].map((stat, i) => (
-                                        <div key={i} className="bg-gray-200/50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200/50 dark:border-white/5">
+                                        <div
+                                            key={i}
+                                            onClick={() => handleDashboardClick(`Viewing ${stat.label}`)}
+                                            className="bg-gray-200/50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200/50 dark:border-white/5 dashboard-btn"
+                                        >
                                             <div className="text-gray-500 dark:text-white/40 text-xs mb-1">{stat.label}</div>
                                             <div className="text-gray-900 dark:text-white font-bold text-base sm:text-xl mb-1">{stat.value}</div>
                                             <div className={`text-xs ${stat.positive ? 'text-green-500' : stat.neutral ? 'text-gray-400 dark:text-white/30' : 'text-red-400'}`}>
@@ -231,14 +279,22 @@ const Hero = () => {
                                 </div>
 
                                 {/* Main Chart Area */}
-                                <div className="bg-gray-200/50 dark:bg-white/[0.03] rounded-xl p-5 border border-gray-200/50 dark:border-white/5 mb-6">
-                                    <div className="flex justify-between items-center mb-4">
+                                <div
+                                    onClick={() => handleDashboardClick('Opening Performance Analytics')}
+                                    className="bg-gray-200/50 dark:bg-white/[0.03] rounded-xl p-5 border border-gray-200/50 dark:border-white/5 mb-6 dashboard-btn"
+                                >
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
                                         <span className="text-gray-700 dark:text-white/80 font-medium">Portfolio Performance</span>
-                                        <div className="flex gap-2">
+                                        {/* Timeframe buttons - wrap on mobile, scroll if needed */}
+                                        <div className="flex flex-wrap gap-1.5 sm:gap-2 overflow-x-auto max-w-full">
                                             {['1D', '1W', '1M', '3M', 'YTD', 'ALL'].map((period) => (
                                                 <button
                                                     key={period}
-                                                    className={`px-2.5 py-1 rounded text-xs ${period === '1M' ? 'bg-neon-cyan/20 text-neon-cyan' : 'text-gray-500 dark:text-white/40 hover:text-gray-900 dark:hover:text-white'}`}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDashboardClick(`Switching to ${period} view`);
+                                                    }}
+                                                    className={`px-2 sm:px-2.5 py-1 rounded text-xs whitespace-nowrap transition-colors ${period === '1M' ? 'bg-neon-cyan/20 text-neon-cyan' : 'text-gray-500 dark:text-white/40 hover:text-gray-900 dark:hover:text-white hover:bg-white/10'}`}
                                                 >
                                                     {period}
                                                 </button>
@@ -249,7 +305,7 @@ const Hero = () => {
                                         {[30, 45, 35, 55, 48, 65, 58, 72, 68, 78, 70, 85, 80, 90, 75, 88, 82, 95, 88, 92, 85, 98, 90, 95].map((h, i) => (
                                             <div
                                                 key={i}
-                                                className="flex-1 rounded-sm bg-gradient-to-t from-neon-cyan/30 to-electric-purple/50"
+                                                className="flex-1 rounded-sm bg-gradient-to-t from-neon-cyan/30 to-electric-purple/50 hover:from-neon-cyan/50 hover:to-electric-purple/70 transition-colors"
                                                 style={{ height: `${h}%` }}
                                             />
                                         ))}
@@ -263,7 +319,11 @@ const Hero = () => {
                                         { name: 'MACD Crossover', status: 'running', return: '+12.7%', trades: 31 },
                                         { name: 'Mean Reversion', status: 'paused', return: '+8.2%', trades: 28 },
                                     ].map((strategy, i) => (
-                                        <div key={i} className="bg-gray-200/50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200/50 dark:border-white/5">
+                                        <div
+                                            key={i}
+                                            onClick={() => handleDashboardClick(`Opening ${strategy.name} Strategy`)}
+                                            className="bg-gray-200/50 dark:bg-white/[0.03] rounded-xl p-4 border border-gray-200/50 dark:border-white/5 dashboard-btn"
+                                        >
                                             <div className="flex items-center gap-2 mb-3">
                                                 <div className={`w-2 h-2 rounded-full ${strategy.status === 'running' ? 'bg-green-400 animate-pulse' : 'bg-gray-400 dark:bg-white/30'}`}></div>
                                                 <span className="text-gray-700 dark:text-white/80 text-sm font-medium">{strategy.name}</span>
@@ -275,7 +335,7 @@ const Hero = () => {
                                                 </div>
                                                 <div className="w-16 h-8 flex items-end gap-0.5">
                                                     {[40, 55, 45, 60, 50, 70, 65, 75].map((h, j) => (
-                                                        <div key={j} className="flex-1 rounded-sm bg-green-500/40" style={{ height: `${h}%` }} />
+                                                        <div key={j} className="flex-1 rounded-sm bg-green-500/40 hover:bg-green-500/60 transition-colors" style={{ height: `${h}%` }} />
                                                     ))}
                                                 </div>
                                             </div>

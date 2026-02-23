@@ -13,6 +13,18 @@ html {
   --text-secondary: rgba(255, 255, 255, 0.6);
   --text-muted: rgba(255, 255, 255, 0.4);
   --border-color: rgba(255, 255, 255, 0.1);
+
+  /* Fluid Typography System - smooth scaling from mobile to desktop */
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  --text-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+  --text-3xl: clamp(1.875rem, 1.5rem + 1.875vw, 2.5rem);
+  --text-4xl: clamp(2.25rem, 1.75rem + 2.5vw, 3rem);
+  --text-5xl: clamp(3rem, 2rem + 5vw, 4.5rem);
+  --text-hero: clamp(2.5rem, 1.5rem + 5vw, 6rem);
 }
 
 /* Light mode overrides */
@@ -221,4 +233,138 @@ svg {
     /* lg:px-8 */
     padding-right: 2rem;
   }
+}
+
+/* ======================================
+   MOBILE MOCKUP SCALING
+   ====================================== */
+.mockup-scale-wrapper {
+  transform-origin: top center;
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .mockup-scale-wrapper {
+    transform: scale(0.85);
+    margin-bottom: -10%;
+  }
+}
+
+@media (max-width: 480px) {
+  .mockup-scale-wrapper {
+    transform: scale(0.65);
+    margin-bottom: -30%;
+  }
+}
+
+/* ======================================
+   TOAST ANIMATION
+   ====================================== */
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+/* ======================================
+   INTERACTIVE BUTTON UTILITIES
+   ====================================== */
+.btn-interactive {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-interactive:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+}
+
+.btn-interactive:active {
+  transform: scale(0.98);
+}
+
+/* Dashboard button hover effect */
+.dashboard-btn {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dashboard-btn:hover {
+  background-color: rgba(6, 182, 212, 0.2) !important;
+  border-color: rgba(6, 182, 212, 0.5) !important;
+}
+
+/* ======================================
+   FEATURE VISUAL SCALING (True Mobile)
+   ====================================== */
+.feature-visual-scale {
+  transform-origin: top center;
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  .feature-visual-scale {
+    transform: scale(0.9);
+    margin-bottom: -5%;
+  }
+}
+
+@media (max-width: 640px) {
+  .feature-visual-scale {
+    transform: scale(0.75);
+    margin-bottom: -12%;
+  }
+}
+
+@media (max-width: 400px) {
+  .feature-visual-scale {
+    transform: scale(0.65);
+    margin-bottom: -18%;
+  }
+}
+
+/* ======================================
+   INFINITE MARQUEE ANIMATION
+   ====================================== */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Hide scrollbar for marquee container */
+.marquee-container {
+  overflow: hidden;
+  mask-image: linear-gradient(to right,
+      transparent,
+      black 10%,
+      black 90%,
+      transparent);
+  -webkit-mask-image: linear-gradient(to right,
+      transparent,
+      black 10%,
+      black 90%,
+      transparent);
 }
