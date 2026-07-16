@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { supabase } from '../lib/supabase';
 import Toast from './Toast';
+
+const WAITLIST_ENDPOINT = '/api/waitlist/join';
 
 const Hero = () => {
     const [email, setEmail] = useState('');
@@ -9,10 +10,29 @@ const Hero = () => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
 
-    // Email validation regex
     const isValidEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
+    };
+
+    const getApiBaseUrl = () => {
+        if (import.meta.env.DEV) {
+            return 'http://127.0.0.1:8000';
+        }
+
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+
+        if (!apiBaseUrl) {
+            console.warn('Missing production API base URL for waitlist submission.');
+            return null;
+        }
+
+        if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i.test(apiBaseUrl)) {
+            console.warn('Invalid production API base URL for waitlist submission.');
+            return null;
+        }
+
+        return apiBaseUrl.replace(/\/+$/, '');
     };
 
     const getUtmParams = () => {
@@ -25,35 +45,23 @@ const Hero = () => {
     };
 
     const getDeviceType = () => {
-        const width = window.screen?.width || 0;
-        return width < 768 ? 'mobile' : 'desktop';
-    };
-
-    const getIpAddress = async () => {
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
-            const response = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
-            clearTimeout(timeoutId);
-            if (!response.ok) return null;
-            const data = await response.json();
-            return data.ip || null;
-        } catch {
-            return null;
-        }
+        const width = window.innerWidth || 0;
+        if (width < 768) return 'mobile';
+        if (width < 1024) return 'tablet';
+        return 'desktop';
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validate email format
-        if (!email) {
-            setMessage({ type: 'error', text: 'Please enter your email.' });
+        if (isLoading) {
             return;
         }
 
-        if (!isValidEmail(email)) {
-            setMessage({ type: 'error', text: 'Please enter a valid email address.' });
+        const normalizedEmail = email.trim().toLowerCase();
+
+        if (!normalizedEmail || !isValidEmail(normalizedEmail)) {
+            setMessage({ type: 'error', text: 'Please enter a valid email.' });
             return;
         }
 
@@ -61,36 +69,59 @@ const Hero = () => {
         setMessage({ type: '', text: '' });
 
         try {
+            const apiBaseUrl = getApiBaseUrl();
+
+            if (import.meta.env.DEV) {
+                console.log('Waitlist API base URL:', apiBaseUrl);
+            }
+
+            if (!apiBaseUrl) {
+                setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
+                return;
+            }
+
             const utmParams = getUtmParams();
-            const ipAddress = await getIpAddress();
             const payload = {
-                email: String(email).trim(),
+                email: normalizedEmail,
+                source: 'landing_page',
                 utm_source: utmParams.utm_source,
                 utm_medium: utmParams.utm_medium,
                 utm_campaign: utmParams.utm_campaign,
                 referrer: document.referrer || null,
-                Source: utmParams.utm_source || 'direct',
-                user_agent: navigator.userAgent || null,
                 browser_language: navigator.language || null,
-                screen_width: window.screen?.width || 0,
-                screen_height: window.screen?.height || 0,
+                screen_width: window.innerWidth || 0,
+                screen_height: window.innerHeight || 0,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null,
                 device_type: getDeviceType(),
-                ip_address: ipAddress,
                 marketing_consent: true,
             };
 
-            const { error } = await supabase.from('waitlist').insert([payload]);
+            const response = await fetch(`${apiBaseUrl}${WAITLIST_ENDPOINT}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+            const data = await response.json().catch(() => ({}));
 
-            if (error) {
-                if (error.code === '23505') {
-                    setMessage({ type: 'error', text: 'This email is already on the waitlist!' });
-                } else {
-                    setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
-                }
-            } else {
-                setMessage({ type: 'success', text: 'Welcome to the club! 🎉' });
+            if (import.meta.env.DEV) {
+                console.log('Waitlist response status code:', response.status);
+                console.log('Waitlist response status value:', data.status);
+            }
+
+            if (response.ok && data.status === 'joined') {
+                setMessage({ type: 'success', text: 'Welcome to the club! 🚀' });
                 setEmail('');
+            } else if (response.ok && data.status === 'already_joined') {
+                setMessage({ type: 'success', text: "You're already on the waitlist." });
+                setEmail('');
+            } else if (response.status === 400) {
+                setMessage({ type: 'error', text: 'Please enter a valid email.' });
+            } else if (response.status === 429) {
+                setMessage({ type: 'error', text: 'Too many attempts. Please try again later.' });
+            } else {
+                setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
             }
         } catch {
             setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
