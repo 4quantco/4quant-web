@@ -4,19 +4,14 @@ This template provides a minimal setup to get React working in Vite with HMR and
 
 ## Environment
 
-Local development:
+For the Vercel + Supabase waitlist, configure:
 
 ```env
-VITE_API_BASE_URL=http://127.0.0.1:8000
+VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 ```
 
-Production example:
-
-```env
-VITE_API_BASE_URL=https://YOUR_PRODUCTION_BACKEND_DOMAIN
-```
-
-Production builds must not use localhost API URLs.
+Do not use service role keys in the frontend.
 
 Currently, two official plugins are available:
 

@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { supabase } from '../lib/supabase';
 import Toast from './Toast';
 
-const WAITLIST_ENDPOINT = '/api/waitlist/join';
+const WAITLIST_TABLE = 'Landing Page - Waitlist';
 
 const Hero = () => {
     const [email, setEmail] = useState('');
@@ -13,26 +14,6 @@ const Hero = () => {
     const isValidEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
-    };
-
-    const getApiBaseUrl = () => {
-        if (import.meta.env.DEV) {
-            return 'http://127.0.0.1:8000';
-        }
-
-        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
-
-        if (!apiBaseUrl) {
-            console.warn('Missing production API base URL for waitlist submission.');
-            return null;
-        }
-
-        if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i.test(apiBaseUrl)) {
-            console.warn('Invalid production API base URL for waitlist submission.');
-            return null;
-        }
-
-        return apiBaseUrl.replace(/\/+$/, '');
     };
 
     const getUtmParams = () => {
@@ -69,25 +50,15 @@ const Hero = () => {
         setMessage({ type: '', text: '' });
 
         try {
-            const apiBaseUrl = getApiBaseUrl();
-
-            if (import.meta.env.DEV) {
-                console.log('Waitlist API base URL:', apiBaseUrl);
-            }
-
-            if (!apiBaseUrl) {
-                setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
-                return;
-            }
-
             const utmParams = getUtmParams();
             const payload = {
                 email: normalizedEmail,
-                source: 'landing_page',
+                Source: 'landing_page',
                 utm_source: utmParams.utm_source,
                 utm_medium: utmParams.utm_medium,
                 utm_campaign: utmParams.utm_campaign,
                 referrer: document.referrer || null,
+                user_agent: navigator.userAgent || null,
                 browser_language: navigator.language || null,
                 screen_width: window.innerWidth || 0,
                 screen_height: window.innerHeight || 0,
@@ -96,30 +67,22 @@ const Hero = () => {
                 marketing_consent: true,
             };
 
-            const response = await fetch(`${apiBaseUrl}${WAITLIST_ENDPOINT}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-            const data = await response.json().catch(() => ({}));
+            const { error, status } = await supabase
+                .from(WAITLIST_TABLE)
+                .insert([payload]);
 
             if (import.meta.env.DEV) {
-                console.log('Waitlist response status code:', response.status);
-                console.log('Waitlist response status value:', data.status);
+                console.log('Supabase waitlist table:', WAITLIST_TABLE);
+                console.log('Supabase waitlist response:', { status, errorCode: error?.code || null });
             }
 
-            if (response.ok && data.status === 'joined') {
+            if (!error) {
                 setMessage({ type: 'success', text: 'Welcome to the club! 🚀' });
                 setEmail('');
-            } else if (response.ok && data.status === 'already_joined') {
-                setMessage({ type: 'success', text: "You're already on the waitlist." });
+            } else if (error.code === '23505') {
+                // TODO: This duplicate path depends on a unique constraint for email in Supabase.
+                setMessage({ type: 'success', text: 'This email is already on the waitlist!' });
                 setEmail('');
-            } else if (response.status === 400) {
-                setMessage({ type: 'error', text: 'Please enter a valid email.' });
-            } else if (response.status === 429) {
-                setMessage({ type: 'error', text: 'Too many attempts. Please try again later.' });
             } else {
                 setMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
             }
