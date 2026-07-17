@@ -193,17 +193,25 @@ const Footer = () => {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="mt-16 pt-8 border-t border-gray-200 dark:border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-gray-400 dark:text-white/30 text-sm">
-                        © 2026 4Quant Inc. All rights reserved.
+                <div className="mt-16 pt-8 border-t border-gray-200 dark:border-white/5">
+                    <p className="text-gray-500 dark:text-white/40 text-sm leading-relaxed max-w-3xl mb-6">
+                        4quant is a strategy research and paper trading platform. It does not provide investment advice, brokerage services, or guaranteed returns. All demo transactions use simulated funds.
                     </p>
-                    <div className="flex items-center gap-6 text-sm">
-                        <a href="#" className="text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
-                            Privacy
-                        </a>
-                        <a href="#" className="text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
-                            Terms
-                        </a>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <p className="text-gray-400 dark:text-white/30 text-sm">
+                            © 2026 4Quant Inc. All rights reserved.
+                        </p>
+                        <div className="flex flex-wrap items-center gap-6 text-sm">
+                            <Link to="/terms" className="text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                Terms of Use
+                            </Link>
+                            <Link to="/privacy" className="text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                Privacy Policy
+                            </Link>
+                            <Link to="/risk-disclaimer" className="text-gray-400 dark:text-white/30 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                Risk Disclaimer
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
